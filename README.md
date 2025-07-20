@@ -116,8 +116,8 @@ tensorflow>=tensorflow>=2.12.0
  
  ## 📞 Contact
  
- - GitHub: [@your-username](https://github.com/your-username)
- - Email: your.email@example.com
+ - GitHub: [@Bolt-H](https://github.com/Bolt-H)
+ - Email: chayanonputpanthasak@gmail.com
  
  ---
  ⭐ If you found this project helpful, please give it a star!
