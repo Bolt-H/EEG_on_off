@@ -1,0 +1,42 @@
+# Core ML and Deep Learning
+tensorflow>=2.12.0
+keras>=2.12.0
+
+# Data Manipulation and Analysis
+numpy>=1.21.0
+pandas>=1.3.0
+
+# Image Processing
+Pillow>=8.3.0
+opencv-python>=4.5.0
+
+# Visualization
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# Machine Learning Utilities
+scikit-learn>=1.0.0
+imbalanced-learn>=0.8.0
+
+# Data Augmentation
+albumentations>=1.3.0
+
+# Progress Bars and Utilities
+tqdm>=4.62.0
+
+# Jupyter Notebook Support
+jupyter>=1.0.0
+ipykernel>=6.0.0
+
+# File Handling
+zipfile36>=0.1.3
+
+# Google Colab Integration (optional)
+google-colab>=1.0.0
+
+# Model Evaluation and Metrics
+classification-report>=0.0.1
+
+# Optional: MLOps and Experiment Tracking
+# mlflow>=2.0.0
+# wandb>=0.13.0
