@@ -9,7 +9,9 @@ from tensorflow.keras.layers import (
   GlobalAveragePooling2D, Conv2D, MaxPooling2D, Flatten
 )
 
-from tensorflow.keras.applications import (
+from tensorflow.keras.applications import EfficientNetV2B0, ResNet50
+
+from tensorflow.keras.callbacks import (
   ModelCheckpoint, EarlyStopping, ReduceLROnPlateau,
   LearningRateScheduler
 )
@@ -19,7 +21,7 @@ class SportsClassificationModel:
   """
   Sports Image Classification Model Builder
   """
-  def __init___(self, num_classes=100, img_size=(224, 224, 3)):
+  def __init__(self, num_classes=100, img_size=(224, 224, 3)):
     """
     Initialize the model builder
     
@@ -43,9 +45,9 @@ class SportsClassificationModel:
     """
     # Load pre-trained EfficientNetV2B0
     base_model = EfficientNetV2B0(
-      input_shape=self.img_size 
-      include_top=False
-      weights='imagenet'
+      input_shape=self.img_size,
+      include_top=False,
+      weights='imagenet',)
     # Freeze or Unfreeze base model 
     base_model.trainable = trainable_base
 
@@ -57,7 +59,7 @@ class SportsClassificationModel:
       
       Dense(512, activation='relu'),
       Dropout(dropout_rate),
-      Batchnormalization(),
+      BatchNormalization(),
       
       Dense(256, activation='relu'),
       Dropout(dropout_rate/2),
@@ -100,41 +102,43 @@ class SportsClassificationModel:
     return model
 
   def build_custom_cnn(self):
-    # First Convolutional Block
-    Conv2D(32, (3, 3), input_shape=self.img_size),
-    BatchNormalization(),
-    Activation('relu')
-    MaxPooling2D(2, 2),
-    # Second Convolutional Block 
-    Conv2D(64, (3, 3)),
-    BatchNormalization(),
-    Activation('relu'),
-    MaxPooling2D(2, 2),
-    # Third Convolutional Block
-    Conv2D(128, (3, 3)),
-    BatchNormalization(),
-    Activation('relu'),
-    MaxPooling2D(2, 2),
-    # Fourth Convolutional Block
-    Conv2D(256, (3, 3)),
-    BatchNormalization(),
-    Activation('relu'),
-    MaxPooling2D(2, 2),
-
-    # Classifier
-    Flatten(),
-    
-    Dense(512),
-    BatchNormalization(),
-    Activation('relu'),
-    Dropout(0.5),
-    
-    Dense(256),
-    BatchNormalization(),
-    Activation('relu'),
-    Dropout(0.3),
-
-    Dense(self.num_classes, activation='softmax')
+    model = Sequential([
+      # First Convolutional Block
+      Conv2D(32, (3, 3), input_shape=self.img_size),
+      BatchNormalization(),
+      Activation('relu')
+      MaxPooling2D(2, 2),
+      # Second Convolutional Block 
+      Conv2D(64, (3, 3)),
+      BatchNormalization(),
+      Activation('relu'),
+      MaxPooling2D(2, 2),
+      # Third Convolutional Block
+      Conv2D(128, (3, 3)),
+      BatchNormalization(),
+      Activation('relu'),
+      MaxPooling2D(2, 2),
+      # Fourth Convolutional Block
+      Conv2D(256, (3, 3)),
+      BatchNormalization(),
+      Activation('relu'),
+      MaxPooling2D(2, 2),
+  
+      # Classifier
+      Flatten(),
+      
+      Dense(512),
+      BatchNormalization(),
+      Activation('relu'),
+      Dropout(0.5),
+      
+      Dense(256),
+      BatchNormalization(),
+      Activation('relu'),
+      Dropout(0.3),
+  
+      Dense(self.num_classes, activation='softmax')
+    ])
     self.model = model 
     return model
   def get_callbacks(self, model_save_path='models/best_sports_model.keras', patience=10, monitor='val_accuracy'):
@@ -203,7 +207,7 @@ def create_sports_model(model_type='efficientnet', num_classes=100, img_size=(22
   if model_type.lower() == 'efficientnet':
     model = builder.build_efficientnet_model(**kwargs)
   elif model_type.lower() == 'resnet':
-    model = builder.build_resnet_model(**kwarges)
+    model = builder.build_resnet_model(**kwargs)
   elif model_type.lower() == 'custom':
     model = builder.build_custom_cnn()
   else:
@@ -251,8 +255,8 @@ def get_lr_scheduler(schedule_type='cosine', **kwargs):
   elif schedule_type == 'step':
     def lr_schedule(epoch):
       initial_lr = kwargs.get('initial_lr', 1e-4)
-      drop_rate = kwargs.get('initial_lr', 1e-4)
-      epochs_drop = kwargs.get('initial_lr', 1e-4)
+      drop_rate = kwargs.get('drop_rate', 0.5)
+      epochs_drop = kwargs.get('epochs_drop', 10)
       return initial_lr * math.pow(drop_rate, math.floor(epoch / epochs_drop))
   elif schedule_type == 'exponential':
     def lr_schedule(epoch):
